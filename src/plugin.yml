@@ -4,4 +4,32 @@ author: EinKaktus
 main: de.lobby.main.Main
 commands:
   build:
+    description: Aktiviert oder deaktiviert den Baumodus
   setlobby:
+    description: Setzt die Spawn-Position
+  settraining:
+    description: Setzt die Training-Position
+  setkitpvp:
+    description: Setzt die KitPvP-Position
+  setdailychests:
+    description: Setzt die Daily-Chests-Position
+permissions:
+  lobby.admin:
+    description: Erlaubt alle administrativen Lobby-Befehle
+    default: op
+    children:
+      lobby.build: true
+      lobby.set: true
+      lobby.settraining: true
+      lobby.setkitpvp: true
+      lobby.setdailychests: true
+  lobby.build:
+    default: op
+  lobby.set:
+    default: op
+  lobby.settraining:
+    default: op
+  lobby.setkitpvp:
+    default: op
+  lobby.setdailychests:
+    default: op

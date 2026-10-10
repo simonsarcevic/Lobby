@@ -2,9 +2,12 @@ package de.lobby.main;
 
 import de.lobby.main.commands.BuildCommand;
 import de.lobby.main.commands.LobbyCommand;
+import de.lobby.main.commands.SetLocationCommand;
 import de.lobby.main.events.ConnectionEvents;
 import de.lobby.main.events.InteractEvents;
 import de.lobby.main.events.InventoryEvents;
+import de.lobby.main.structure.Inventories;
+import de.lobby.main.structure.Items;
 import de.lobby.main.util.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -13,27 +16,58 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 
     private static Main instance;
+    private ConfigManager configManager;
 
     @Override
     public void onEnable() {
         instance = this;
-        EventManager();
-        ConfigManager configManager = new ConfigManager();
+        configManager = new ConfigManager();
         configManager.createSpawnFile();
+        EventManager();
+
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
+        for (int slot = 0; slot < Inventories.MENU_INVENTORY.getSize(); slot++) {
+            Inventories.MENU_INVENTORY.setItem(slot, Items.navigatorFiller.clone());
+        }
+        Inventories.MENU_INVENTORY.setItem(4, Items.dailyRewards);
+        Inventories.MENU_INVENTORY.setItem(20, Items.training);
+        Inventories.MENU_INVENTORY.setItem(22, Items.spawn);
+        Inventories.MENU_INVENTORY.setItem(24, Items.kitpvp);
+
+        for (int slot = 0; slot < Inventories.LOBBY_SWITCHER.getSize(); slot++) {
+            Inventories.LOBBY_SWITCHER.setItem(slot, Items.lobbySwitcherFiller.clone());
+        }
+        Inventories.LOBBY_SWITCHER.setItem(11, Items.lobby);
+        Inventories.LOBBY_SWITCHER.setItem(13, Items.lobby1);
+        Inventories.LOBBY_SWITCHER.setItem(15, Items.lobby2);
 
         getCommand("build").setExecutor(new BuildCommand());
-        getCommand("setlobby").setExecutor(new LobbyCommand());
+        getCommand("setlobby").setExecutor(new LobbyCommand(configManager));
+        getCommand("settraining").setExecutor(new SetLocationCommand(
+                configManager, "training", "Training", "lobby.settraining"
+        ));
+        getCommand("setkitpvp").setExecutor(new SetLocationCommand(
+                configManager, "kitpvp", "KitPvP", "lobby.setkitpvp"
+        ));
+        getCommand("setdailychests").setExecutor(new SetLocationCommand(
+                configManager, "dailychests", "Daily Chests", "lobby.setdailychests"
+        ));
     }
 
     private void EventManager(){
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new ConnectionEvents(), this);
-        pm.registerEvents(new InventoryEvents(), this);
+        pm.registerEvents(new ConnectionEvents(configManager), this);
+        pm.registerEvents(new InventoryEvents(configManager), this);
         pm.registerEvents(new InteractEvents(), this);
     }
 
     public static Main getInstance() {
         return instance;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
 }

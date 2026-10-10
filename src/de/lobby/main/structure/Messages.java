@@ -9,4 +9,6 @@ public interface Messages {
     String activateBuild = "§7Baumodus wurde §aaktiviert§7!";
     String deactivateBuild = "§7Baumodus wurde §adeaktiviert§7!";
     String spawnSet = "§7Der Spawn wurde §aerfolgreich §7gesetzt!";
+    String locationNotSet = "§7Dieses Ziel wurde noch §cnicht gesetzt§7!";
+    String visibilityCooldown = "§7Bitte warte noch §c%seconds% Sekunde(n)§7!";
 }

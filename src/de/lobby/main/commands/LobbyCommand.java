@@ -9,13 +9,19 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class LobbyCommand implements CommandExecutor {
+
+    private final ConfigManager configManager;
+
+    public LobbyCommand(ConfigManager configManager) {
+        this.configManager = configManager;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)){
             return true;
         }
         Player player = (Player) sender;
-        ConfigManager manager = new ConfigManager();
 
         if (!player.hasPermission("lobby.set") && !player.hasPermission("lobby.admin")) {
             player.sendMessage(Messages.prefix + Messages.noPermission);
@@ -23,8 +29,8 @@ public class LobbyCommand implements CommandExecutor {
         }
 
         Location loc = player.getLocation();
-        manager.setSpawn(loc);
+        configManager.setSpawn(loc);
         player.sendMessage(Messages.prefix + Messages.spawnSet);
-        return false;
+        return true;
     }
 }

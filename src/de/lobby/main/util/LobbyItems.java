@@ -1,18 +1,17 @@
 package de.lobby.main.util;
 
 import de.lobby.main.structure.Items;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class LobbyItems {
 
 
     public static void getLobbyItems(Player player){
 
-        player.getInventory().setItem(0, Items.compass);
-        player.getInventory().setItem(4, Items.playerHider);
-        player.getInventory().setItem(8, Items.lobbySwitcher);
+        player.getInventory().setItem(0, Items.compass.clone());
+        player.getInventory().setItem(4, HidePlayerManager.containsHideList(player)
+                ? Items.playerShower.clone() : Items.playerHider.clone());
+        player.getInventory().setItem(8, Items.lobbySwitcher.clone());
     }
 
     public static void removeLobbyItems(Player player){
