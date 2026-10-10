@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class InteractEvents implements Listener {
 
@@ -32,6 +33,11 @@ public class InteractEvents implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event){
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFoodChange(FoodLevelChangeEvent event){
         event.setCancelled(true);
     }
 }
