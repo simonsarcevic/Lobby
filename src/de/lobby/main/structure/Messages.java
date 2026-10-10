@@ -8,4 +8,5 @@ public interface Messages {
     String noPermission = "§7Dazu hast du §ckeine §7Rechte!";
     String activateBuild = "§7Baumodus wurde §aaktiviert§7!";
     String deactivateBuild = "§7Baumodus wurde §adeaktiviert§7!";
+    String spawnSet = "§7Der Spawn wurde §aerfolgreich §7gesetzt!";
 }

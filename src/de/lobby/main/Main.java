@@ -1,6 +1,7 @@
 package de.lobby.main;
 
 import de.lobby.main.commands.BuildCommand;
+import de.lobby.main.commands.LobbyCommand;
 import de.lobby.main.events.ConnectionEvents;
 import de.lobby.main.events.InteractEvents;
 import de.lobby.main.events.InventoryEvents;
@@ -16,13 +17,12 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        ConfigManager manager = new ConfigManager();
         EventManager();
-        manager.createConfig();
-        manager.saveConfig();
-        manager.loadConfig();
+        ConfigManager configManager = new ConfigManager();
+        configManager.createSpawnFile();
 
         getCommand("build").setExecutor(new BuildCommand());
+        getCommand("setlobby").setExecutor(new LobbyCommand());
     }
 
     private void EventManager(){

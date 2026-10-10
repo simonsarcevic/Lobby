@@ -1,54 +1,76 @@
 package de.lobby.main.util;
 
+
+import de.lobby.main.Main;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ConfigManager {
 
-    private final File file = new File("plugins/Lobby", "config.yml");
-    private final YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+    private File file;
+    private FileConfiguration spawnConfig;
 
-    public void saveConfig(){
-        try {
-            cfg.save(file);
-        } catch (Exception exception) {
-            exception.printStackTrace();
+    public void createSpawnFile(){
+        if (!Main.getInstance().getDataFolder().exists()){
+            Main.getInstance().getDataFolder().mkdirs();
         }
-    }
 
-    public void addToConfig(String path, Object properties){
-        try {
-            cfg.set(path, properties);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        saveConfig();
-    }
+        file = new File(Main.getInstance().getDataFolder(), "spawn.yml");
 
-    public void getFromConfig(String path){
-        try {
-            cfg.get(path);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    public void loadConfig(){
-        try {
-            cfg.load(file);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    public void createConfig(){
-        try {
-            if (!file.exists()){
-                file.mkdirs();
+        if (!file.mkdirs()){
+            try {
+                file.createNewFile();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
-        } catch (Exception exception) {
+        }
+
+        spawnConfig = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public void saveSpawnFile(){
+        try {
+            spawnConfig.save(file);
+        } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    public void setSpawn(Location location){
+        spawnConfig.set("spawn.world", location.getWorld().getName());
+        spawnConfig.set("spawn.x", location.getX());
+        spawnConfig.set("spawn.y", location.getY());
+        spawnConfig.set("spawn.z", location.getZ());
+        spawnConfig.set("spawn.yaw", location.getYaw());
+        spawnConfig.set("spawn.pitch", location.getPitch());
+
+        saveSpawnFile();
+    }
+
+    public Location getSpawn() {
+        if (!spawnConfig.contains("spawn.world")) {
+            return null;
+        }
+
+        World world = Bukkit.getWorld(spawnConfig.getString("spawn.world"));
+
+        if (world == null) {
+            return null;
+        }
+
+        double x = spawnConfig.getDouble("spawn.x");
+        double y = spawnConfig.getDouble("spawn.y");
+        double z = spawnConfig.getDouble("spawn.z");
+
+        float yaw = (float) spawnConfig.getDouble("spawn.yaw");
+        float pitch = (float) spawnConfig.getDouble("spawn.pitch");
+
+        return new Location(world, x, y, z, yaw, pitch);
     }
 }
