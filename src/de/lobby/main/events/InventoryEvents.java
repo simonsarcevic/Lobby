@@ -1,6 +1,7 @@
 package de.lobby.main.events;
 
 import de.lobby.main.structure.Inventories;
+import de.lobby.main.structure.ItemTitles;
 import de.lobby.main.structure.Items;
 import de.lobby.main.structure.Messages;
 import de.lobby.main.util.HidePlayerManager;
@@ -34,7 +35,7 @@ public class InventoryEvents implements Listener {
 
         if (event.hasItem()){
             if (event.getItem().hasItemMeta()){
-                if (event.getItem().getItemMeta().getDisplayName().equals(Items.NAVIGATOR)){
+                if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)){
                     if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
                         player.openInventory(Inventories.MENU_INVENTORY);
                         event.setCancelled(true);
@@ -42,7 +43,7 @@ public class InventoryEvents implements Listener {
                 }
 
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
-                    if (event.getItem().getItemMeta().getDisplayName().equals(Items.HIDE_PLAYER)){
+                    if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.HIDE_PLAYER)){
                         for (Player all : Bukkit.getOnlinePlayers()){
                             if (!hidePlayerManager.containsHideList(player)){
                                 HidePlayerManager.setHidePlayer(player);
