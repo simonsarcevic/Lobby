@@ -35,8 +35,8 @@ public class InventoryEvents implements Listener {
 
         if (event.hasItem()){
             if (event.getItem().hasItemMeta()){
-                if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)){
-                    if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)) {
+                    if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                         player.openInventory(Inventories.MENU_INVENTORY);
                         event.setCancelled(true);
                     }
@@ -56,6 +56,15 @@ public class InventoryEvents implements Listener {
                                 player.sendMessage(Messages.prefix + Messages.showPlayers);
                                 player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 1);
                             }
+                        }
+                    }
+                }
+
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                    if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)){
+                        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                            player.openInventory(Inventories.LOBBY_SWITCHER);
+                            event.setCancelled(true);
                         }
                     }
                 }
