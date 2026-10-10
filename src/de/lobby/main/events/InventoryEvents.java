@@ -47,12 +47,12 @@ public class InventoryEvents implements Listener {
                             if (!hidePlayerManager.containsHideList(player)){
                                 HidePlayerManager.setHidePlayer(player);
                                 player.hidePlayer(all);
-                                player.sendMessage(Messages.hidePlayers);
+                                player.sendMessage(Messages.prefix + Messages.hidePlayers);
                                 player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 1);
                             }else{
                                 HidePlayerManager.removeHidePlayer(player);
                                 player.showPlayer(all);
-                                player.sendMessage(Messages.showPlayers);
+                                player.sendMessage(Messages.prefix + Messages.showPlayers);
                                 player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 1);
                             }
                         }
