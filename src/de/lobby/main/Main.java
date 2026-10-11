@@ -4,6 +4,7 @@ import de.lobby.main.commands.BuildCommand;
 import de.lobby.main.commands.LobbyCommand;
 import de.lobby.main.commands.SetLocationCommand;
 import de.lobby.main.events.ConnectionEvents;
+import de.lobby.main.events.EnvironmentEvents;
 import de.lobby.main.events.InteractEvents;
 import de.lobby.main.events.InventoryEvents;
 import de.lobby.main.structure.Inventories;
@@ -60,6 +61,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new ConnectionEvents(configManager), this);
         pm.registerEvents(new InventoryEvents(configManager), this);
         pm.registerEvents(new InteractEvents(), this);
+        pm.registerEvents(new EnvironmentEvents(), this);
     }
 
     public static Main getInstance() {

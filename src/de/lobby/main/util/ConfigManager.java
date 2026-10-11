@@ -78,6 +78,17 @@ public class ConfigManager {
     public Location getLocation(String name) {
         String path = name.toLowerCase();
 
+        if (this.spawnConfig == null) {
+            java.io.File file = new java.io.File(Bukkit.getPluginManager().getPlugin("Lobby").getDataFolder(), "spawn.yml");
+
+            if (file.exists()) {
+                this.spawnConfig = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+            } else {
+                Bukkit.getLogger().warning("[Lobby] spawn.yml konnte nicht im Ordner gefunden werden!");
+                return null;
+            }
+        }
+
         if (!spawnConfig.contains(path + ".world")) {
             return null;
         }
