@@ -2,6 +2,7 @@ package de.lobby.main;
 
 import de.lobby.main.commands.BuildCommand;
 import de.lobby.main.commands.LobbyCommand;
+import de.lobby.main.commands.SetJumpAndRunStartCommand;
 import de.lobby.main.commands.SetLocationCommand;
 import de.lobby.main.events.ConnectionEvents;
 import de.lobby.main.events.EnvironmentEvents;
@@ -9,6 +10,7 @@ import de.lobby.main.events.InteractEvents;
 import de.lobby.main.events.InventoryEvents;
 import de.lobby.main.structure.Inventories;
 import de.lobby.main.structure.Items;
+import de.lobby.main.structure.Locations;
 import de.lobby.main.util.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -46,13 +48,16 @@ public class Main extends JavaPlugin {
         getCommand("build").setExecutor(new BuildCommand());
         getCommand("setlobby").setExecutor(new LobbyCommand(configManager));
         getCommand("settraining").setExecutor(new SetLocationCommand(
-                configManager, "training", "Training", "lobby.settraining"
+                configManager, Locations.TRAINING, "Training", "lobby.admin"
         ));
         getCommand("setkitpvp").setExecutor(new SetLocationCommand(
-                configManager, "kitpvp", "KitPvP", "lobby.setkitpvp"
+                configManager, Locations.KITPVP, "KitPvP", "lobby.admin"
         ));
         getCommand("setdailychests").setExecutor(new SetLocationCommand(
-                configManager, "dailychests", "Daily Chests", "lobby.setdailychests"
+                configManager, Locations.DAILY_CHESTS, "Daily Chests", "lobby.admin"
+        ));
+        getCommand("setjumpandrun").setExecutor(new SetJumpAndRunStartCommand(
+                configManager, Locations.JUMP_AND_RUN, "lobby.admin"
         ));
     }
 

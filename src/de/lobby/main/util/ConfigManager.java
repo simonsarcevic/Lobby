@@ -24,9 +24,6 @@ public class ConfigManager {
         }
 
         file = new File(dataFolder, "spawn.yml");
-
-        // Eine ältere Version hat spawn.yml versehentlich als Ordner erstellt.
-        // Leere fehlerhafte Ordner werden einmalig repariert.
         if (file.isDirectory()) {
             String[] children = file.list();
             if (children == null || children.length != 0 || !file.delete()) {

@@ -13,6 +13,7 @@ commands:
     description: Setzt die KitPvP-Position
   setdailychests:
     description: Setzt die Daily-Chests-Position
+  setjumpandrun:
 permissions:
   lobby.admin:
     description: Erlaubt alle administrativen Lobby-Befehle

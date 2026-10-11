@@ -1,14 +1,7 @@
 package de.lobby.main.events;
 
-import de.lobby.main.structure.Inventories;
-import de.lobby.main.structure.InventoryTitles;
-import de.lobby.main.structure.ItemTitles;
-import de.lobby.main.structure.Items;
-import de.lobby.main.structure.Messages;
-import de.lobby.main.util.BuildModeUtils;
-import de.lobby.main.util.ConfigManager;
-import de.lobby.main.util.HidePlayerManager;
-import de.lobby.main.util.ServerConnector;
+import de.lobby.main.structure.*;
+import de.lobby.main.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -168,6 +161,32 @@ public class InventoryEvents implements Listener {
                             player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
                             player.openInventory(Inventories.LOBBY_SWITCHER);
                             event.setCancelled(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJumpAndRun(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        ConfigManager manager = new ConfigManager();
+
+        if (event.hasItem()){
+            if (event.getItem().hasItemMeta()){
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                    if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.EXIT_JUMP_AND_RUN)){
+                        if (JumpAndRunUtils.isInJumpAndRun(player)){
+                            JumpAndRunUtils.exitJumpAndRun(player);
+                        }
+                    }
+                }
+
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                    if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.TELEPORT_TO_JUMP_AND_RUN_START)){
+                        if (JumpAndRunUtils.isInJumpAndRun(player)){
+                            player.teleport(manager.getLocation(Locations.JUMP_AND_RUN));
                         }
                     }
                 }

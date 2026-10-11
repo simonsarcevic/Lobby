@@ -13,4 +13,6 @@ public interface ItemTitles {
     String KITPVP = "§6§lKitPvP";
     String SPAWN = "§a§lSpawn";
     String DAILY_REWARDS = "§d§lDaily Rewards";
+    String EXIT_JUMP_AND_RUN = "§c§lVerlassen";
+    String TELEPORT_TO_JUMP_AND_RUN_START = "§e§lZum Start";
 }

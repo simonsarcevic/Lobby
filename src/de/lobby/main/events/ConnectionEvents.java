@@ -2,6 +2,7 @@ package de.lobby.main.events;
 
 import de.lobby.main.util.ConfigManager;
 import de.lobby.main.util.HidePlayerManager;
+import de.lobby.main.util.JumpAndRunUtils;
 import de.lobby.main.util.LobbyItems;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,6 +42,10 @@ public class ConnectionEvents implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
         HidePlayerManager.clearPlayer(event.getPlayer());
+        JumpAndRunUtils.clearPlayer(event.getPlayer());
+        if (JumpAndRunUtils.isInJumpAndRun(event.getPlayer())){
+            JumpAndRunUtils.exitJumpAndRun(event.getPlayer());
+        }
         event.setQuitMessage(null);
     }
 }

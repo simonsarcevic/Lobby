@@ -42,4 +42,7 @@ public interface Items {
             ItemTitles.DAILY_REWARDS, DAILY_REWARDS_SKULL_TEXTURE,
             "§7Klicke, um zu den Daily Rewards zu gelangen."
     );
+
+    ItemStack EXIT_JUMP_AND_RUN = ItemBuilder.createItem(new ItemStack(Material.BARRIER), ItemTitles.EXIT_JUMP_AND_RUN, 1);
+    ItemStack BACK_TO_START_JUMP_AND_RUN = ItemBuilder.createItem(new ItemStack(Material.GOLD_PLATE), ItemTitles.TELEPORT_TO_JUMP_AND_RUN_START, 1);
 }

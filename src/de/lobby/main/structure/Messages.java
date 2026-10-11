@@ -11,4 +11,5 @@ public interface Messages {
     String spawnSet = "§7Der Spawn wurde §aerfolgreich §7gesetzt!";
     String locationNotSet = "§7Dieses Ziel wurde noch §cnicht gesetzt§7!";
     String visibilityCooldown = "§7Bitte warte noch §c%seconds% Sekunde(n)§7!";
+    String setJumpAndRunLocation = "§7Die Position wurde §aerfolgreich §7gesetzt!";
 }
