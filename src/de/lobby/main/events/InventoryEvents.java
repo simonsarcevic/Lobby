@@ -118,6 +118,7 @@ public class InventoryEvents implements Listener {
             if (event.getItem().hasItemMeta()){
                 if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)) {
                     if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                        player.playSound(player.getLocation(), Sound.CHEST_OPEN, 2, 1);
                         player.openInventory(Inventories.MENU_INVENTORY);
                         event.setCancelled(true);
                     }
@@ -164,6 +165,7 @@ public class InventoryEvents implements Listener {
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
                     if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.LOBBY_SWITCHER)){
                         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                            player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
                             player.openInventory(Inventories.LOBBY_SWITCHER);
                             event.setCancelled(true);
                         }
