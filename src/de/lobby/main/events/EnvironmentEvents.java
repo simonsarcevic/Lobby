@@ -1,6 +1,7 @@
 package de.lobby.main.events;
 
 import de.lobby.main.structure.Locations;
+import de.lobby.main.structure.Messages;
 import de.lobby.main.util.ConfigManager;
 import de.lobby.main.util.JumpAndRunUtils;
 import org.bukkit.Location;
@@ -18,7 +19,9 @@ public class EnvironmentEvents implements Listener {
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event){
-        event.setCancelled(true);
+        if (event.toWeatherState()){
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -40,7 +43,7 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event){
         if (event.getAction() != Action.PHYSICAL) {
             return;
@@ -57,7 +60,7 @@ public class EnvironmentEvents implements Listener {
         Location plate = manager.getLocation(Locations.JUMP_AND_RUN);
 
         if (plate == null) {
-            player.sendMessage("§cJumpAndRun Location nicht gesetzt!");
+            player.sendMessage(Messages.prefix + "§7JumpAndRun Location §cnicht §7gesetzt!");
             return;
         }
 
@@ -73,7 +76,8 @@ public class EnvironmentEvents implements Listener {
 
         if (!JumpAndRunUtils.isInJumpAndRun(player)) {
             JumpAndRunUtils.startJumpAndRun(player);
-            player.sendMessage("§aJumpAndRun gestartet!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
+            player.sendMessage(Messages.prefix + "§7JumpAndRun §agestartet§7!");
         }
     }
 }

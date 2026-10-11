@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 
 public final class ServerConnector {
 
+    public static final String NAVIGATION_CHANNEL = "LobbyNavigate";
+
     private ServerConnector() {
     }
 
@@ -16,5 +18,20 @@ public final class ServerConnector {
         output.writeUTF(serverName);
 
         player.sendPluginMessage(Main.getInstance(), "BungeeCord", output.toByteArray());
+    }
+
+    public static void navigate(Player player, String locationName) {
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeUTF("Navigate");
+        output.writeUTF(locationName);
+
+        player.sendPluginMessage(Main.getInstance(), NAVIGATION_CHANNEL, output.toByteArray());
+    }
+
+    public static void requestPendingDestination(Player player) {
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeUTF("RequestDestination");
+
+        player.sendPluginMessage(Main.getInstance(), NAVIGATION_CHANNEL, output.toByteArray());
     }
 }

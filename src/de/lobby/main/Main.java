@@ -12,6 +12,8 @@ import de.lobby.main.structure.Inventories;
 import de.lobby.main.structure.Items;
 import de.lobby.main.structure.Locations;
 import de.lobby.main.util.ConfigManager;
+import de.lobby.main.util.NavigationMessageListener;
+import de.lobby.main.util.ServerConnector;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +31,12 @@ public class Main extends JavaPlugin {
         EventManager();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, ServerConnector.NAVIGATION_CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(
+                this,
+                ServerConnector.NAVIGATION_CHANNEL,
+                new NavigationMessageListener(configManager)
+        );
 
         for (int slot = 0; slot < Inventories.MENU_INVENTORY.getSize(); slot++) {
             Inventories.MENU_INVENTORY.setItem(slot, Items.navigatorFiller.clone());
@@ -65,7 +73,7 @@ public class Main extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new ConnectionEvents(configManager), this);
         pm.registerEvents(new InventoryEvents(configManager), this);
-        pm.registerEvents(new InteractEvents(), this);
+        pm.registerEvents(new InteractEvents(configManager), this);
         pm.registerEvents(new EnvironmentEvents(), this);
     }
 

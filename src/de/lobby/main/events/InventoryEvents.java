@@ -3,7 +3,6 @@ package de.lobby.main.events;
 import de.lobby.main.structure.*;
 import de.lobby.main.util.*;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,13 +43,13 @@ public class InventoryEvents implements Listener {
 
         if (navigator) {
             if (itemTitle.equals(ItemTitles.TRAINING)) {
-                teleportTo(player, "training");
+                navigateTo(player, "training");
             } else if (itemTitle.equals(ItemTitles.KITPVP)) {
-                teleportTo(player, "kitpvp");
+                navigateTo(player, "kitpvp");
             } else if (itemTitle.equals(ItemTitles.SPAWN)) {
-                teleportTo(player, "spawn");
+                navigateTo(player, "spawn");
             } else if (itemTitle.equals(ItemTitles.DAILY_REWARDS)) {
-                teleportTo(player, "dailychests");
+                navigateTo(player, "dailychests");
             }
             return;
         }
@@ -90,17 +89,9 @@ public class InventoryEvents implements Listener {
         }
     }
 
-    private void teleportTo(Player player, String locationName) {
+    private void navigateTo(Player player, String locationName) {
         player.closeInventory();
-        Location location = configManager.getLocation(locationName);
-
-        if (location == null) {
-            player.sendMessage(Messages.prefix + Messages.locationNotSet);
-            return;
-        }
-
-        player.teleport(location);
-        player.playSound(location, Sound.ENDERMAN_TELEPORT, 1, 1);
+        ServerConnector.navigate(player, locationName);
     }
 
     @EventHandler
