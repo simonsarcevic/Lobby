@@ -14,6 +14,9 @@ commands:
   setdailychests:
     description: Setzt die Daily-Chests-Position
   setjumpandrun:
+  setrewardchest:
+    description: Setzt die angesehene Kiste als Daily-Reward-Kiste
+    permission: lobby.setrewardchest
 permissions:
   lobby.admin:
     description: Erlaubt alle administrativen Lobby-Befehle
@@ -24,6 +27,7 @@ permissions:
       lobby.settraining: true
       lobby.setkitpvp: true
       lobby.setdailychests: true
+      lobby.setrewardchest: true
   lobby.build:
     default: op
   lobby.set:
@@ -33,4 +37,6 @@ permissions:
   lobby.setkitpvp:
     default: op
   lobby.setdailychests:
+    default: op
+  lobby.setrewardchest:
     default: op

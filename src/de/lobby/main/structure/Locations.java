@@ -6,4 +6,5 @@ public interface Locations {
     String DAILY_CHESTS = "dailychests";
     String KITPVP = "kitpvp";
     String TRAINING = "training";
+    String REWARD_CHEST = "rewardchest";
 }

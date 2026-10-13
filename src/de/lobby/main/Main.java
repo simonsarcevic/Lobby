@@ -1,9 +1,6 @@
 package de.lobby.main;
 
-import de.lobby.main.commands.BuildCommand;
-import de.lobby.main.commands.LobbyCommand;
-import de.lobby.main.commands.SetJumpAndRunStartCommand;
-import de.lobby.main.commands.SetLocationCommand;
+import de.lobby.main.commands.*;
 import de.lobby.main.events.ConnectionEvents;
 import de.lobby.main.events.EnvironmentEvents;
 import de.lobby.main.events.InteractEvents;
@@ -12,6 +9,7 @@ import de.lobby.main.structure.Inventories;
 import de.lobby.main.structure.Items;
 import de.lobby.main.structure.Locations;
 import de.lobby.main.util.ConfigManager;
+import de.lobby.main.util.DailyRewardManager;
 import de.lobby.main.util.NavigationMessageListener;
 import de.lobby.main.util.ServerConnector;
 import org.bukkit.Bukkit;
@@ -22,12 +20,14 @@ public class Main extends JavaPlugin {
 
     private static Main instance;
     private ConfigManager configManager;
+    private DailyRewardManager dailyRewardManager;
 
     @Override
     public void onEnable() {
         instance = this;
         configManager = new ConfigManager();
         configManager.createSpawnFile();
+        dailyRewardManager = new DailyRewardManager(this);
         EventManager();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -67,14 +67,18 @@ public class Main extends JavaPlugin {
         getCommand("setjumpandrun").setExecutor(new SetJumpAndRunStartCommand(
                 configManager, Locations.JUMP_AND_RUN, "lobby.admin"
         ));
+
+        getCommand("setrewardchest").setExecutor(new SetRewardChestCommand(
+                configManager, Locations.REWARD_CHEST, "lobby.setrewardchest"
+        ));
     }
 
     private void EventManager(){
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new ConnectionEvents(configManager), this);
-        pm.registerEvents(new InventoryEvents(configManager), this);
+        pm.registerEvents(new InventoryEvents(configManager, dailyRewardManager), this);
         pm.registerEvents(new InteractEvents(configManager), this);
-        pm.registerEvents(new EnvironmentEvents(), this);
+        pm.registerEvents(new EnvironmentEvents(configManager, dailyRewardManager), this);
     }
 
     public static Main getInstance() {

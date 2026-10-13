@@ -25,7 +25,7 @@ public class SetLocationCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Dieser Befehl kann nur von einem Spieler ausgeführt werden.");
+            sender.sendMessage(Messages.onlyPlayers);
             return true;
         }
 
@@ -36,7 +36,7 @@ public class SetLocationCommand implements CommandExecutor {
         }
 
         configManager.setLocation(locationName, player.getLocation());
-        player.sendMessage(Messages.prefix + "§7Die Position für §a" + displayName + " §7wurde gesetzt!");
+        player.sendMessage(Messages.prefix + Messages.positionSet.replace("%location%", displayName));
         return true;
     }
 }

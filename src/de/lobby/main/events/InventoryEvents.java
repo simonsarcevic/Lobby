@@ -16,9 +16,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class InventoryEvents implements Listener {
 
     private final ConfigManager configManager;
+    private final DailyRewardManager dailyRewardManager;
 
-    public InventoryEvents(ConfigManager configManager) {
+    public InventoryEvents(ConfigManager configManager, DailyRewardManager dailyRewardManager) {
         this.configManager = configManager;
+        this.dailyRewardManager = dailyRewardManager;
     }
 
     @EventHandler
@@ -28,9 +30,15 @@ public class InventoryEvents implements Listener {
         BuildModeUtils buildModeUtils = new BuildModeUtils();
         boolean lobbySwitcher = event.getInventory().getTitle().equals(InventoryTitles.LOBBY_SWITCHER);
         boolean navigator = event.getInventory().getTitle().equals(InventoryTitles.NAVIGATOR);
+        boolean dailyRewards = event.getInventory().getTitle().equals(InventoryTitles.DAILY_REWARDS);
 
-        if (!buildModeUtils.isPlayerInBuildMode(player) || lobbySwitcher || navigator) {
+        if (!buildModeUtils.isPlayerInBuildMode(player) || lobbySwitcher || navigator || dailyRewards) {
             event.setCancelled(true);
+        }
+
+        if (dailyRewards) {
+            handleDailyRewardClick(event, player);
+            return;
         }
 
         if (!lobbySwitcher && !navigator) return;
@@ -75,7 +83,8 @@ public class InventoryEvents implements Listener {
 
         if (!buildModeUtils.isPlayerInBuildMode(player)
                 || event.getInventory().getTitle().equals(InventoryTitles.LOBBY_SWITCHER)
-                || event.getInventory().getTitle().equals(InventoryTitles.NAVIGATOR)) {
+                || event.getInventory().getTitle().equals(InventoryTitles.NAVIGATOR)
+                || event.getInventory().getTitle().equals(InventoryTitles.DAILY_REWARDS)) {
             event.setCancelled(true);
         }
     }
@@ -92,6 +101,42 @@ public class InventoryEvents implements Listener {
     private void navigateTo(Player player, String locationName) {
         player.closeInventory();
         ServerConnector.navigate(player, locationName);
+    }
+
+    private void handleDailyRewardClick(InventoryClickEvent event, Player player) {
+        if (DailyRewardInventory.isCloseSlot(event.getRawSlot())) {
+            player.closeInventory();
+            return;
+        }
+
+        int clickedDay = DailyRewardInventory.getRewardDay(event.getRawSlot());
+        if (clickedDay == -1) {
+            return;
+        }
+
+        int claimableDay = dailyRewardManager.getClaimableDay(player);
+        if (claimableDay == -1) {
+            player.sendMessage(Messages.prefix + Messages.dailyRewardAlreadyClaimed);
+            return;
+        }
+
+        if (clickedDay != claimableDay) {
+            player.sendMessage(Messages.prefix + Messages.dailyRewardWrongDay.replace(
+                    "%day%", String.valueOf(claimableDay)
+            ));
+            return;
+        }
+
+        if (!dailyRewardManager.claim(player, clickedDay)) {
+            return;
+        }
+
+        long coins = dailyRewardManager.getCoinsForDay(clickedDay);
+        player.closeInventory();
+        player.sendMessage(Messages.prefix + Messages.dailyRewardClaimed
+                .replace("%day%", String.valueOf(clickedDay))
+                .replace("%coins%", String.valueOf(coins)));
+        player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
     }
 
     @EventHandler

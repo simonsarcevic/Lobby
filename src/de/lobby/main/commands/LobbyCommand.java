@@ -22,7 +22,6 @@ public class LobbyCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-
         if (!player.hasPermission("lobby.set") && !player.hasPermission("lobby.admin")) {
             player.sendMessage(Messages.prefix + Messages.noPermission);
             return true;
