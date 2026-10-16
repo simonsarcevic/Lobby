@@ -1,5 +1,6 @@
 package de.lobby.main;
 
+import de.einkaktus.coins.api.CoinSystemAPI;
 import de.lobby.main.commands.*;
 import de.lobby.main.events.ConnectionEvents;
 import de.lobby.main.events.EnvironmentEvents;
@@ -21,6 +22,7 @@ public class Main extends JavaPlugin {
     private static Main instance;
     private ConfigManager configManager;
     private DailyRewardManager dailyRewardManager;
+    private CoinSystemAPI coinAPI;
 
     @Override
     public void onEnable() {
@@ -28,6 +30,7 @@ public class Main extends JavaPlugin {
         configManager = new ConfigManager();
         configManager.createSpawnFile();
         dailyRewardManager = new DailyRewardManager(this);
+        coinAPI = CoinSystemAPI.get();
         EventManager();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -56,13 +59,13 @@ public class Main extends JavaPlugin {
         getCommand("build").setExecutor(new BuildCommand());
         getCommand("setlobby").setExecutor(new LobbyCommand(configManager));
         getCommand("settraining").setExecutor(new SetLocationCommand(
-                configManager, Locations.TRAINING, "Training", "lobby.admin"
+                configManager, Locations.TRAINING, "Training", "lobby.settraining"
         ));
         getCommand("setkitpvp").setExecutor(new SetLocationCommand(
-                configManager, Locations.KITPVP, "KitPvP", "lobby.admin"
+                configManager, Locations.KITPVP, "KitPvP", "lobby.setkitpvp"
         ));
         getCommand("setdailychests").setExecutor(new SetLocationCommand(
-                configManager, Locations.DAILY_CHESTS, "Daily Chests", "lobby.admin"
+                configManager, Locations.DAILY_CHESTS, "Daily Chests", "lobby.setdailychests"
         ));
         getCommand("setjumpandrun").setExecutor(new SetJumpAndRunStartCommand(
                 configManager, Locations.JUMP_AND_RUN, "lobby.admin"
@@ -76,7 +79,7 @@ public class Main extends JavaPlugin {
     private void EventManager(){
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new ConnectionEvents(configManager), this);
-        pm.registerEvents(new InventoryEvents(configManager, dailyRewardManager), this);
+        pm.registerEvents(new InventoryEvents(this, configManager, dailyRewardManager, coinAPI), this);
         pm.registerEvents(new InteractEvents(configManager), this);
         pm.registerEvents(new EnvironmentEvents(configManager, dailyRewardManager), this);
     }
@@ -89,4 +92,7 @@ public class Main extends JavaPlugin {
         return configManager;
     }
 
+    public CoinSystemAPI getCoinAPI() {
+        return coinAPI;
+    }
 }

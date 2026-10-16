@@ -2,6 +2,7 @@ name: Lobby
 version: 1.0
 author: EinKaktus
 main: de.lobby.main.Main
+depend: [CoinSystem]
 commands:
   build:
     description: Aktiviert oder deaktiviert den Baumodus

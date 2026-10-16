@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class DailyRewardManager {
 
@@ -16,6 +19,7 @@ public class DailyRewardManager {
 
     private final File file;
     private final FileConfiguration configuration;
+    private final Map<UUID, PendingClaim> pendingClaims = new HashMap<>();
 
     public DailyRewardManager(JavaPlugin plugin) {
         File dataFolder = plugin.getDataFolder();
@@ -58,18 +62,53 @@ public class DailyRewardManager {
     }
 
     public boolean claim(Player player, int day) {
+        if (!reserveClaim(player, day)) {
+            return false;
+        }
+
+        return completeClaim(player);
+    }
+
+    public boolean reserveClaim(Player player, int day) {
+        UUID playerId = player.getUniqueId();
+        if (pendingClaims.containsKey(playerId)) {
+            return false;
+        }
+
         int claimableDay = getClaimableDay(player);
         if (claimableDay == -1 || day != claimableDay) {
             return false;
         }
 
-        int newStreak = getActiveStreak(player) + 1;
-        String path = getPlayerPath(player);
-        configuration.set(path + ".name", player.getName());
-        configuration.set(path + ".streak", newStreak);
-        configuration.set(path + ".last-claim", LocalDate.now().toString());
-        save();
+        pendingClaims.put(playerId, new PendingClaim(
+                player.getName(),
+                getActiveStreak(player) + 1,
+                LocalDate.now()
+        ));
         return true;
+    }
+
+    public boolean completeClaim(Player player) {
+        PendingClaim pendingClaim = pendingClaims.get(player.getUniqueId());
+        if (pendingClaim == null) {
+            return false;
+        }
+
+        String path = getPlayerPath(player);
+        configuration.set(path + ".name", pendingClaim.playerName);
+        configuration.set(path + ".streak", pendingClaim.streak);
+        configuration.set(path + ".last-claim", pendingClaim.claimDate.toString());
+        save();
+        pendingClaims.remove(player.getUniqueId());
+        return true;
+    }
+
+    public void cancelClaim(Player player) {
+        pendingClaims.remove(player.getUniqueId());
+    }
+
+    public boolean hasPendingClaim(Player player) {
+        return pendingClaims.containsKey(player.getUniqueId());
     }
 
     public boolean isClaimedDay(Player player, int day) {
@@ -113,6 +152,18 @@ public class DailyRewardManager {
             configuration.save(file);
         } catch (IOException exception) {
             throw new IllegalStateException("daily-rewards.yml konnte nicht gespeichert werden.", exception);
+        }
+    }
+
+    private static final class PendingClaim {
+        private final String playerName;
+        private final int streak;
+        private final LocalDate claimDate;
+
+        private PendingClaim(String playerName, int streak, LocalDate claimDate) {
+            this.playerName = playerName;
+            this.streak = streak;
+            this.claimDate = claimDate;
         }
     }
 }

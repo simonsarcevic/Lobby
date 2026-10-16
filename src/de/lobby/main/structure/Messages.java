@@ -21,4 +21,6 @@ public interface Messages {
     String dailyRewardAlreadyClaimed = "§7Du hast deine heutige Belohnung bereits §cabgeholt§7!";
     String dailyRewardWrongDay = "§7Du kannst aktuell nur die Belohnung von §eTag %day% §7abholen!";
     String dailyRewardClaimed = "§7Du hast für §eTag %day% §6%coins% Coins §7erhalten!";
+    String dailyRewardProcessing = "§7Deine Belohnung wird bereits §everarbeitet§7!";
+    String dailyRewardPayoutFailed = "§7Die Coins konnten nicht ausgezahlt werden. Bitte versuche es erneut!";
 }

@@ -1,5 +1,6 @@
 package de.lobby.main.events;
 
+import de.einkaktus.coins.api.CoinSystemAPI;
 import de.lobby.main.structure.*;
 import de.lobby.main.util.*;
 import org.bukkit.Bukkit;
@@ -12,15 +13,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class InventoryEvents implements Listener {
 
+    private final JavaPlugin plugin;
     private final ConfigManager configManager;
     private final DailyRewardManager dailyRewardManager;
+    private final CoinSystemAPI coinAPI;
 
-    public InventoryEvents(ConfigManager configManager, DailyRewardManager dailyRewardManager) {
+    public InventoryEvents(JavaPlugin plugin, ConfigManager configManager,
+                           DailyRewardManager dailyRewardManager, CoinSystemAPI coinAPI) {
+        this.plugin = plugin;
         this.configManager = configManager;
         this.dailyRewardManager = dailyRewardManager;
+        this.coinAPI = coinAPI;
     }
 
     @EventHandler
@@ -127,16 +134,41 @@ public class InventoryEvents implements Listener {
             return;
         }
 
-        if (!dailyRewardManager.claim(player, clickedDay)) {
+        if (!dailyRewardManager.reserveClaim(player, clickedDay)) {
+            if (dailyRewardManager.hasPendingClaim(player)) {
+                player.sendMessage(Messages.prefix + Messages.dailyRewardProcessing);
+            }
             return;
         }
 
         long coins = dailyRewardManager.getCoinsForDay(clickedDay);
         player.closeInventory();
-        player.sendMessage(Messages.prefix + Messages.dailyRewardClaimed
-                .replace("%day%", String.valueOf(clickedDay))
-                .replace("%coins%", String.valueOf(coins)));
-        player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
+
+        coinAPI.addCoins(player.getUniqueId(), player.getName(), coins)
+                .whenComplete((newBalance, error) -> Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (error != null) {
+                        dailyRewardManager.cancelClaim(player);
+                        plugin.getLogger().warning("Daily-Reward-Auszahlung für "
+                                + player.getName() + " fehlgeschlagen: " + error.getMessage());
+                        if (player.isOnline()) {
+                            player.sendMessage(Messages.prefix + Messages.dailyRewardPayoutFailed);
+                        }
+                        return;
+                    }
+
+                    if (!dailyRewardManager.completeClaim(player)) {
+                        plugin.getLogger().severe("Daily Reward für " + player.getName()
+                                + " wurde ausgezahlt, konnte aber nicht gespeichert werden.");
+                        return;
+                    }
+
+                    if (player.isOnline()) {
+                        player.sendMessage(Messages.prefix + Messages.dailyRewardClaimed
+                                .replace("%day%", String.valueOf(clickedDay))
+                                .replace("%coins%", String.valueOf(coins)));
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 1);
+                    }
+                }));
     }
 
     @EventHandler
