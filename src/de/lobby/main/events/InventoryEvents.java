@@ -4,6 +4,7 @@ import de.einkaktus.coins.api.CoinSystemAPI;
 import de.lobby.main.structure.*;
 import de.lobby.main.util.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -107,7 +108,14 @@ public class InventoryEvents implements Listener {
 
     private void navigateTo(Player player, String locationName) {
         player.closeInventory();
-        ServerConnector.navigate(player, locationName);
+        Location location = configManager.getLocation(locationName);
+        if (location == null) {
+            player.sendMessage(Messages.prefix + Messages.locationNotSet);
+            return;
+        }
+
+        player.teleport(location);
+        player.playSound(location, Sound.ENDERMAN_TELEPORT, 1, 1);
     }
 
     private void handleDailyRewardClick(InventoryClickEvent event, Player player) {

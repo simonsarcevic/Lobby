@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public final class ServerConnector {
 
-    public static final String NAVIGATION_CHANNEL = "LobbyNavigate";
+    public static final String NAVIGATION_CHANNEL = "niko:lobby_navigate";
 
     private ServerConnector() {
     }
