@@ -55,9 +55,9 @@ public class InventoryEvents implements Listener {
 
         if (navigator) {
             if (itemTitle.equals(ItemTitles.TRAINING)) {
-                navigateTo(player, "training");
+                connectToServer(player, "training");
             } else if (itemTitle.equals(ItemTitles.KITPVP)) {
-                navigateTo(player, "kitpvp");
+                connectToServer(player, "kitpvp");
             } else if (itemTitle.equals(ItemTitles.SPAWN)) {
                 navigateTo(player, "spawn");
             } else if (itemTitle.equals(ItemTitles.DAILY_REWARDS)) {
@@ -105,6 +105,11 @@ public class InventoryEvents implements Listener {
     private void navigateTo(Player player, String locationName) {
         player.closeInventory();
         ServerConnector.navigate(player, locationName);
+    }
+
+    private void connectToServer(Player player, String serverName) {
+        player.closeInventory();
+        ServerConnector.connect(player, serverName);
     }
 
     private void handleDailyRewardClick(InventoryClickEvent event, Player player) {
