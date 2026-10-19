@@ -40,7 +40,7 @@ public interface Items {
     );
     ItemStack dailyRewards = ItemBuilder.createCustomSkull(
             ItemTitles.DAILY_REWARDS, DAILY_REWARDS_SKULL_TEXTURE,
-            "§7Klicke, um zu den Daily Rewards zu gelangen."
+            "§7Klicke, um zu den täglichen Belohnungen zu gelangen."
     );
 
     ItemStack EXIT_JUMP_AND_RUN = ItemBuilder.createItem(new ItemStack(Material.BARRIER), ItemTitles.EXIT_JUMP_AND_RUN, 1);
