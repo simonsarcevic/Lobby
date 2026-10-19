@@ -40,7 +40,7 @@ public class EnvironmentEvents implements Listener {
         Player player = event.getPlayer();
         Location location = player.getLocation();
 
-        if (location.getY() < 5){
+        if (location.getY() < 7){
             Location target;
             if (JumpAndRunUtils.isInJumpAndRun(player)){
                 target = configManager.getLocation(Locations.JUMP_AND_RUN);
