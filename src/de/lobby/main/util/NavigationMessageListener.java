@@ -46,8 +46,10 @@ public class NavigationMessageListener implements PluginMessageListener {
             }
 
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> teleport(playerId, destination));
-        } catch (RuntimeException ignored) {
-            ignored.printStackTrace();
+        } catch (RuntimeException exception) {
+            Main.getInstance().getLogger().warning(
+                    "Ungültige Navigationsnachricht verworfen: " + exception.getMessage()
+            );
         }
     }
 

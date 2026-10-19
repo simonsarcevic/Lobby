@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public class SetRewardChestCommand implements CommandExecutor {
 
@@ -36,7 +36,7 @@ public class SetRewardChestCommand implements CommandExecutor {
             return true;
         }
 
-        Block targetBlock = player.getTargetBlock((HashSet<Byte>) null, 6);
+        Block targetBlock = player.getTargetBlock((Set<Material>) null, 6);
         if (targetBlock == null || (targetBlock.getType() != Material.CHEST
                 && targetBlock.getType() != Material.TRAPPED_CHEST)) {
             player.sendMessage(Messages.prefix + Messages.lookAtChest);

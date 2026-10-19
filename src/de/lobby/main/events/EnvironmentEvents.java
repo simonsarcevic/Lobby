@@ -41,15 +41,20 @@ public class EnvironmentEvents implements Listener {
         Location location = player.getLocation();
 
         if (location.getY() < 5){
+            Location target;
             if (JumpAndRunUtils.isInJumpAndRun(player)){
-                player.teleport(configManager.getLocation(Locations.JUMP_AND_RUN));
-                player.setFallDistance(0);
-                player.playSound(location, Sound.NOTE_PLING, 2, 1);
+                target = configManager.getLocation(Locations.JUMP_AND_RUN);
             }else{
-                player.teleport(configManager.getSpawn());
-                player.setFallDistance(0);
-                player.playSound(location, Sound.NOTE_PLING, 2, 1);
+                target = configManager.getSpawn();
             }
+
+            if (target == null) {
+                return;
+            }
+
+            player.teleport(target);
+            player.setFallDistance(0);
+            player.playSound(target, Sound.NOTE_PLING, 2, 1);
         }
     }
 

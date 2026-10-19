@@ -12,7 +12,7 @@ public interface ItemTitles {
     String TRAINING = "§c§lTraining";
     String KITPVP = "§6§lKitPvP";
     String SPAWN = "§a§lSpawn";
-    String DAILY_REWARDS = "§d§lDaily Rewards";
+    String DAILY_REWARDS = "§d§lTägliche Belohnungen";
     String EXIT_JUMP_AND_RUN = "§c§lVerlassen";
     String TELEPORT_TO_JUMP_AND_RUN_START = "§e§lZum Start";
 }

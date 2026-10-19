@@ -2,6 +2,7 @@ package de.lobby.main.events;
 
 import de.lobby.main.Main;
 import de.lobby.main.util.ConfigManager;
+import de.lobby.main.util.BuildModeUtils;
 import de.lobby.main.util.HidePlayerManager;
 import de.lobby.main.util.JumpAndRunUtils;
 import de.lobby.main.util.LobbyItems;
@@ -49,8 +50,10 @@ public class ConnectionEvents implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        HidePlayerManager.clearPlayer(event.getPlayer());
-        JumpAndRunUtils.exitJumpAndRun(event.getPlayer());
+        Player player = event.getPlayer();
+        HidePlayerManager.clearPlayer(player);
+        JumpAndRunUtils.clearPlayer(player);
+        new BuildModeUtils().removePlayerFromBuildMode(player);
         event.setQuitMessage(null);
     }
 }

@@ -76,7 +76,7 @@ public class ConfigManager {
         String path = name.toLowerCase();
 
         if (this.spawnConfig == null) {
-            java.io.File file = new java.io.File(Bukkit.getPluginManager().getPlugin("Lobby").getDataFolder(), "spawn.yml");
+            java.io.File file = new java.io.File(Main.getInstance().getDataFolder(), "spawn.yml");
 
             if (file.exists()) {
                 this.spawnConfig = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);

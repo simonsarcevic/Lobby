@@ -32,8 +32,10 @@ public class JumpAndRunUtils {
     }
 
     public static void exitJumpAndRun(Player player){
+        if (!activePlayers.remove(player.getUniqueId())) {
+            return;
+        }
         removeJumpAndRunItems(player);
-        activePlayers.remove(player.getUniqueId());
     }
 
     public static void clearPlayer(Player player){

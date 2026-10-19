@@ -1,15 +1,12 @@
 package de.lobby.main;
 
-import de.einkaktus.coins.api.CoinSystemAPI;
 import de.lobby.main.commands.*;
-import de.lobby.main.events.ConnectionEvents;
-import de.lobby.main.events.EnvironmentEvents;
-import de.lobby.main.events.InteractEvents;
-import de.lobby.main.events.InventoryEvents;
+import de.lobby.main.events.*;
 import de.lobby.main.structure.Inventories;
 import de.lobby.main.structure.Items;
 import de.lobby.main.structure.Locations;
 import de.lobby.main.util.ConfigManager;
+import de.lobby.main.util.CoinSystemBridge;
 import de.lobby.main.util.DailyRewardManager;
 import de.lobby.main.util.NavigationMessageListener;
 import de.lobby.main.util.ServerConnector;
@@ -22,7 +19,7 @@ public class Main extends JavaPlugin {
     private static Main instance;
     private ConfigManager configManager;
     private DailyRewardManager dailyRewardManager;
-    private CoinSystemAPI coinAPI;
+    private CoinSystemBridge coinSystemBridge;
 
     @Override
     public void onEnable() {
@@ -30,7 +27,12 @@ public class Main extends JavaPlugin {
         configManager = new ConfigManager();
         configManager.createSpawnFile();
         dailyRewardManager = new DailyRewardManager(this);
-        coinAPI = CoinSystemAPI.get();
+        try {
+            coinSystemBridge = new CoinSystemBridge();
+        } catch (IllegalStateException exception) {
+            getLogger().warning(exception.getMessage()
+                    + " Daily Rewards werden deaktiviert; die Lobby bleibt aktiv.");
+        }
         EventManager();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -57,6 +59,7 @@ public class Main extends JavaPlugin {
         Inventories.LOBBY_SWITCHER.setItem(15, Items.lobby2);
 
         getCommand("build").setExecutor(new BuildCommand());
+        getCommand("lobby").setExecutor(new ReturnToLobbyCommand(configManager));
         getCommand("setlobby").setExecutor(new LobbyCommand(configManager));
         getCommand("settraining").setExecutor(new SetLocationCommand(
                 configManager, Locations.TRAINING, "Training", "lobby.settraining"
@@ -79,9 +82,12 @@ public class Main extends JavaPlugin {
     private void EventManager(){
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new ConnectionEvents(configManager), this);
-        pm.registerEvents(new InventoryEvents(this, configManager, dailyRewardManager, coinAPI), this);
+        pm.registerEvents(new InventoryEvents(
+                this, dailyRewardManager, coinSystemBridge
+        ), this);
         pm.registerEvents(new InteractEvents(configManager), this);
         pm.registerEvents(new EnvironmentEvents(configManager, dailyRewardManager), this);
+        pm.registerEvents(new DoubleJump(), this);
     }
 
     public static Main getInstance() {
@@ -92,7 +98,7 @@ public class Main extends JavaPlugin {
         return configManager;
     }
 
-    public CoinSystemAPI getCoinAPI() {
-        return coinAPI;
+    public CoinSystemBridge getCoinSystemBridge() {
+        return coinSystemBridge;
     }
 }

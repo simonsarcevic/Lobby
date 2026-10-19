@@ -1,10 +1,8 @@
 package de.lobby.main.events;
 
-import de.einkaktus.coins.api.CoinSystemAPI;
 import de.lobby.main.structure.*;
 import de.lobby.main.util.*;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,16 +17,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class InventoryEvents implements Listener {
 
     private final JavaPlugin plugin;
-    private final ConfigManager configManager;
     private final DailyRewardManager dailyRewardManager;
-    private final CoinSystemAPI coinAPI;
+    private final CoinSystemBridge coinSystemBridge;
 
-    public InventoryEvents(JavaPlugin plugin, ConfigManager configManager,
-                           DailyRewardManager dailyRewardManager, CoinSystemAPI coinAPI) {
+    public InventoryEvents(JavaPlugin plugin, DailyRewardManager dailyRewardManager,
+                           CoinSystemBridge coinSystemBridge) {
         this.plugin = plugin;
-        this.configManager = configManager;
         this.dailyRewardManager = dailyRewardManager;
-        this.coinAPI = coinAPI;
+        this.coinSystemBridge = coinSystemBridge;
     }
 
     @EventHandler
@@ -108,14 +104,7 @@ public class InventoryEvents implements Listener {
 
     private void navigateTo(Player player, String locationName) {
         player.closeInventory();
-        Location location = configManager.getLocation(locationName);
-        if (location == null) {
-            player.sendMessage(Messages.prefix + Messages.locationNotSet);
-            return;
-        }
-
-        player.teleport(location);
-        player.playSound(location, Sound.ENDERMAN_TELEPORT, 1, 1);
+        ServerConnector.navigate(player, locationName);
     }
 
     private void handleDailyRewardClick(InventoryClickEvent event, Player player) {
@@ -152,7 +141,13 @@ public class InventoryEvents implements Listener {
         long coins = dailyRewardManager.getCoinsForDay(clickedDay);
         player.closeInventory();
 
-        coinAPI.addCoins(player.getUniqueId(), player.getName(), coins)
+        if (coinSystemBridge == null) {
+            dailyRewardManager.cancelClaim(player);
+            player.sendMessage(Messages.prefix + Messages.dailyRewardPayoutFailed);
+            return;
+        }
+
+        coinSystemBridge.addCoins(player.getUniqueId(), player.getName(), coins)
                 .whenComplete((newBalance, error) -> Bukkit.getScheduler().runTask(plugin, () -> {
                     if (error != null) {
                         dailyRewardManager.cancelClaim(player);
@@ -184,7 +179,8 @@ public class InventoryEvents implements Listener {
         Player player = event.getPlayer();
 
         if (event.hasItem()){
-            if (event.getItem().hasItemMeta()){
+            if (event.getItem().hasItemMeta()
+                    && event.getItem().getItemMeta().hasDisplayName()){
                 if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.NAVIGATOR)) {
                     if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                         player.playSound(player.getLocation(), Sound.CHEST_OPEN, 2, 1);
@@ -250,7 +246,8 @@ public class InventoryEvents implements Listener {
         ConfigManager manager = new ConfigManager();
 
         if (event.hasItem()){
-            if (event.getItem().hasItemMeta()){
+            if (event.getItem().hasItemMeta()
+                    && event.getItem().getItemMeta().hasDisplayName()){
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
                     if (event.getItem().getItemMeta().getDisplayName().equals(ItemTitles.EXIT_JUMP_AND_RUN)){
                         if (JumpAndRunUtils.isInJumpAndRun(player)){
